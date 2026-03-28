@@ -1,0 +1,428 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-cyan: #00F5FF;
+  --neon-yellow: #FFEF00;
+  --neon-red: #FF003C;
+  --neon-purple: #9D00FF;
+  --dark-bg: #0A0A0F;
+  --panel-bg: rgba(5, 5, 15, 0.85);
+  --text-primary: #E8E8E8;
+  --text-glow: #00F5FF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--dark-bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  cursor: none;
+}
+
+#game-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#ui-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+  z-index: 20;
+}
+
+.error-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #0A0A0F 0%, #1a0a0f 100%);
+  text-align: center;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.glitch-text {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--neon-red);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  text-shadow:
+    0 0 10px var(--neon-red),
+    0 0 20px var(--neon-red),
+    0 0 30px var(--neon-red);
+  animation: glitch 2s infinite;
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+.error-message {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.error-message .small {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.hud-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hud-top-left {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+}
+
+.objective-tracker {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-yellow);
+  padding: 15px 20px;
+  min-width: 300px;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 20px rgba(255, 239, 0, 0.3),
+    inset 0 0 20px rgba(255, 239, 0, 0.1);
+}
+
+.objective-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--neon-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+  text-shadow: 0 0 10px var(--neon-yellow);
+}
+
+.objective-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+.objective-distance {
+  font-size: 0.9rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.hud-top-right {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  text-align: right;
+}
+
+.money-display {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-cyan);
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px var(--neon-cyan);
+  margin-bottom: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.currency-symbol {
+  margin-right: 5px;
+}
+
+.wanted-level {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.wanted-star {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 2px solid var(--neon-red);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.wanted-star.active {
+  background: var(--neon-red);
+  opacity: 1;
+  box-shadow: 0 0 10px var(--neon-red);
+}
+
+.hud-bottom-left {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+}
+
+.minimap {
+  width: 200px;
+  height: 200px;
+  background: var(--panel-bg);
+  border: 3px solid var(--neon-cyan);
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 30px rgba(0, 245, 255, 0.4),
+    inset 0 0 30px rgba(0, 245, 255, 0.1);
+}
+
+#minimap-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.health-bar-container {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-red);
+  padding: 10px 15px;
+  min-width: 250px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--neon-red);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 5px;
+  text-shadow: 0 0 10px var(--neon-red);
+}
+
+.health-bar {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 0, 60, 0.1);
+  border: 1px solid var(--neon-red);
+  position: relative;
+  overflow: hidden;
+}
+
+.health-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-red) 0%, #ff3366 100%);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 15px var(--neon-red);
+}
+
+.health-text {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.stamina-bar-container {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-cyan);
+  padding: 5px 15px;
+  min-width: 250px;
+  backdrop-filter: blur(10px);
+}
+
+.stamina-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 245, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  position: relative;
+  overflow: hidden;
+}
+
+.stamina-fill {
+  height: 100%;
+  background: var(--neon-cyan);
+  transition: width 0.2s ease;
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.hud-bottom-right {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+}
+
+.ammo-display {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-yellow);
+  padding: 15px 25px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.weapon-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px var(--neon-yellow));
+}
+
+.ammo-count {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 15px var(--neon-yellow);
+}
+
+.ammo-separator {
+  margin: 0 5px;
+  color: var(--text-primary);
+}
+
+.ammo-reserve {
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.hud-center-bottom {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.interaction-prompt {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-cyan);
+  padding: 15px 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+}
+
+.prompt-key {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  background: rgba(0, 245, 255, 0.1);
+  border: 2px solid var(--neon-cyan);
+  padding: 8px 15px;
+  text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.prompt-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px var(--neon-cyan),
+    0 0 20px var(--neon-cyan);
+  pointer-events: none;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.crosshair::before {
+  width: 12px;
+  height: 2px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.crosshair::after {
+  width: 2px;
+  height: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.hud-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 245, 255, 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 245, 255, 0.03) 3px
+  );
+  pointer-events: none;
+  z-index: 100;
+  animation: flicker 0.15s infinite;
+}
